@@ -15,3 +15,4 @@ def get_data_from_csv(drop=True):
     if drop: df.drop(['CountryCode', 'CurrencyCode', 'BatchId', 'SubscriptionId', 'AccountId', 'ProductCategory'], axis=1, inplace=True)
 
     return df
+    
