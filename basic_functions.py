@@ -2,6 +2,8 @@
 def get_data_from_csv():
     """df import with some alterations we discovered so far
     Parses dates, drops 'CountryCode' and 'CurrencyCode' columns, sets appropriate dtypes.
+    drop (Boolean): Whether or not to drop unnecessary columns (import all if False)
+    
     Returns:
         DataFrame: A dataframe with the imported data
     """
