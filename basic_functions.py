@@ -110,7 +110,6 @@ def custom_smote(X, y, RSEED):
     X_sm = X_sm.astype({"Value": "int32", "time_of_day": "int32"})
     return X_sm, y_sm
 
-
 def custom_preprocess(X_tr, X_te, nf):
     """function to preprocess data
 
@@ -137,6 +136,15 @@ def custom_preprocess(X_tr, X_te, nf):
 
 
 def cust_dummies(X, cf):
+    """function to get dummy variables 
+
+    Args:
+        X (pd.frame): test or train data
+        cf (string): column names of categorical data in X
+
+    Returns:
+        _type_: _description_
+    """
 
     # get_dummies
     import pandas as pd
@@ -169,8 +177,7 @@ def custom_logreg(X_train, X_test, y_train, y_test):
     return y_train_pred, y_test_pred
 
 def custom_nb(X_train, X_test, y_train, y_test):
-    """function to run logistic regression
-
+    """function to run gaussian naive bayes classifier
     Args:
         X_train (pd.df): training features, run through custom_smote()
         X_test (pd.df): test features
@@ -191,7 +198,7 @@ def custom_nb(X_train, X_test, y_train, y_test):
     return y_train_pred, y_test_pred
 
 def custom_rf(X_train, X_test, y_train, y_test):
-    """_summary_
+    """function to run Random Forest Classifier
 
     Args:
         X_train (pd.df): training features, run through custom_smote()
@@ -214,7 +221,7 @@ def custom_rf(X_train, X_test, y_train, y_test):
 
 
 def custom_knn(X_train, X_test, y_train, y_test):
-    """_summary_
+    """Function to run KNN Classifier
 
     Args:
         X_train (pd.df): training features, run through custom_smote()
@@ -237,7 +244,7 @@ def custom_knn(X_train, X_test, y_train, y_test):
 
 
 def custom_svc(X_train, X_test, y_train, y_test):
-    """_summary_
+    """function to run SVC classifier
 
     Args:
         X_train (pd.df): training features, run through custom_smote()
@@ -260,7 +267,7 @@ def custom_svc(X_train, X_test, y_train, y_test):
 
 
 def custom_stack(X_train, y_train, X_test, y_test):
-    """_summary_
+    """function to run stacking
 
     Args:
         X_train (_type_): _description_
