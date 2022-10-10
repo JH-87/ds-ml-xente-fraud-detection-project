@@ -137,3 +137,6 @@ dmypy.json
 
 # Data 
 data/
+
+# playground file
+playground.ipynb
