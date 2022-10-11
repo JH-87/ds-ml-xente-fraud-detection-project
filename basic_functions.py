@@ -182,7 +182,7 @@ def custom_logreg(X_train, X_test, y_train, y_test):
     from sklearn.linear_model import LogisticRegression
 
     # Initiate model
-    logreg = LogisticRegression()
+    logreg = LogisticRegression(random_state = 42)
     y_train_pred = logreg.fit(X_train, y_train)
     y_test_pred = logreg.predict(X_test)
 
@@ -271,7 +271,7 @@ def custom_svc(X_train, X_test, y_train, y_test):
     from sklearn.svm import SVC
 
     # Initiate model
-    svc = SVC()
+    svc = SVC(random_state = 42)
     y_train_pred = svc.fit(X_train, y_train)
     y_test_pred = svc.predict(X_test)
 
@@ -301,8 +301,8 @@ def custom_stack(X_train, y_train, X_test, y_test):
 
 
     models = [
-        ('lr', LogisticRegression()), ('knn', KNeighborsClassifier()), ('nb', GaussianNB()), 
-        ('rf', RandomForestClassifier()), ('svm', SVC())
+        ('lr', LogisticRegression(random_state=42)), ('knn', KNeighborsClassifier()), ('nb', GaussianNB()), 
+        ('rf', RandomForestClassifier(random_state=42)), ('svm', SVC(random_state=42))
         ]
     stacking = StackingClassifier(estimators=models)
 
