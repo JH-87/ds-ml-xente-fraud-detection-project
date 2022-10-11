@@ -1,21 +1,27 @@
 # We will use this file to define basic functions used in multiple notebooks
-def get_data_from_csv():
+def get_data_from_csv(path='data/xente/training.csv', drop=True):
     """df import with some alterations we discovered so far
-    Parses dates, drops 'CountryCode' and 'CurrencyCode' columns, sets appropriate dtypes.
-    drop (Boolean): Whether or not to drop unnecessary columns (import all if False)
+    Parses dates, drops several columns.
+
+    Args:
+        drop (Boolean): Whether or not to drop unnecessary columns (import all if False)
     
     Returns:
         DataFrame: A dataframe with the imported data
     """
 
     import pandas as pd
-    return pd.read_csv(
-        'data/xente/training.csv', parse_dates=['TransactionStartTime'],  
-        index_col='TransactionId').drop(
-            ['BatchId', 'AccountId', 'SubscriptionId', 'CustomerId', 'CountryCode', 
-            'CurrencyCode', 'ProductId'], axis=1
-        )
-
+    if drop:
+        return pd.read_csv(
+            path, parse_dates=['TransactionStartTime'],  
+            index_col='TransactionId').drop(
+                ['BatchId', 'SubscriptionId', 'CustomerId', 'CountryCode', 
+                'CurrencyCode', 'ProductId'], axis=1
+            )
+    else:
+        return pd.read_csv(
+            path, parse_dates=['TransactionStartTime'],  
+            index_col='TransactionId')
 
 def feature_engineering(dataframe):
     """edits features for model learning
@@ -29,29 +35,27 @@ def feature_engineering(dataframe):
     #######################
     # Feature engineering #
     #######################
-    # editing columns for smotenc (it apparently does not take strings like "ChannelID_1")
-    #dataframe["CustomerId"] = dataframe["CustomerId"].str.replace("CustomerId_", "")
-    dataframe["ProviderId"] = dataframe["ProviderId"].str.replace("ProviderId_", "")
-    #dataframe["ProductId"] = dataframe["ProductId"].str.replace("ProductId_", "")
-    dataframe["ChannelId"] = dataframe["ChannelId"].str.replace("ChannelId_", "")
-
-    # create column with 0 for negative values in "Amount" and 1 for positive values
+    ### create column with 0 for negative values in "Amount" and 1 for positive values
     dataframe['InOut'] = dataframe['Amount']
     dataframe['InOut'][dataframe['Amount'] < 0 ] = 1
     dataframe['InOut'][dataframe['Amount'] >=0 ] = 0
 
-    # create a column which is 0 if abs("Amount")=="Value" and 1 if not
+    ### create a column which is 0 if abs("Amount")=="Value" and 1 if not
     dataframe['difference'] = dataframe.eval("abs(Amount) - Value")
     dataframe['difference'][dataframe['difference'] != 0] = 1
     dataframe = dataframe.drop("Amount", axis = 1)
 
-    # create weekday column
+    ### create weekday column
     dataframe['weekday'] = dataframe['TransactionStartTime'].dt.dayofweek
 
-    # creating time of day column
+    ### creating time of day column
     dataframe["time_of_day"] = dataframe["TransactionStartTime"].dt.second + dataframe["TransactionStartTime"].dt.minute * 60 + dataframe["TransactionStartTime"].dt.hour * 3600
     dataframe = dataframe.drop("TransactionStartTime", axis=1)
     dataframe[['PricingStrategy', 'weekday']] = dataframe[['PricingStrategy', 'weekday']].astype('object')
+
+    # rearrange columns (categoricals first)
+    dataframe = dataframe[["ProviderId", "ProductCategory", "ChannelId", "PricingStrategy", 
+        "weekday", "difference", "InOut", "Value", "time_of_day", "FraudResult"]]
     return dataframe
 
 def tts_custom(df, RSEED):
@@ -145,7 +149,8 @@ def cust_dummies(X, cf):
     Returns:
         _type_: _description_
     """
-
+    # all features should be categorical
+    X[cf] = X[cf].astype("category")
     # get_dummies
     import pandas as pd
     dummies = pd.get_dummies(X[cf], drop_first=True)
@@ -167,7 +172,6 @@ def custom_logreg(X_train, X_test, y_train, y_test):
         y_train_pred, y_test_pred: predictions
     """
     from sklearn.linear_model import LogisticRegression
-    from sklearn.model_selection import cross_val_predict
 
     # Initiate model
     logreg = LogisticRegression()
@@ -188,7 +192,6 @@ def custom_nb(X_train, X_test, y_train, y_test):
         y_train_pred, y_test_pred: predictions
     """
     from sklearn.naive_bayes import GaussianNB
-    from sklearn.model_selection import cross_val_predict
 
     # Initiate model
     nb = GaussianNB()
@@ -210,7 +213,6 @@ def custom_rf(X_train, X_test, y_train, y_test):
         y_train_pred, y_test_pred: predictions
     """
     from sklearn.ensemble import RandomForestClassifier
-    from sklearn.model_selection import cross_val_predict
 
     # Initiate model
     rf = RandomForestClassifier()
@@ -233,7 +235,6 @@ def custom_knn(X_train, X_test, y_train, y_test):
         y_train_pred, y_test_pred: predictions
     """
     from sklearn.neighbors import KNeighborsClassifier
-    from sklearn.model_selection import cross_val_predict
 
     # Initiate model
     knn = KNeighborsClassifier()
@@ -256,7 +257,6 @@ def custom_svc(X_train, X_test, y_train, y_test):
         y_train_pred, y_test_pred: predictions
     """
     from sklearn.svm import SVC
-    from sklearn.model_selection import cross_val_predict
 
     # Initiate model
     svc = SVC()
@@ -286,7 +286,6 @@ def custom_stack(X_train, y_train, X_test, y_test):
     from sklearn.linear_model import LogisticRegression
     from sklearn.neighbors import KNeighborsClassifier
     from sklearn.svm import SVC
-    from sklearn.model_selection import cross_val_predict
 
 
     models = [
@@ -308,6 +307,3 @@ def custom_stack(X_train, y_train, X_test, y_test):
         )
     
     return y_train_pred, y_test_pred
-
-
-
