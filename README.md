@@ -1,5 +1,6 @@
 
 # The Challenge
+## Binary Classification with an imbalanced dataset
 
 The objective of this competition is to create a machine learning model to detect fraudulent transactions.
 
