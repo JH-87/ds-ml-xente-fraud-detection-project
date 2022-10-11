@@ -140,3 +140,6 @@ data/
 
 # playground file
 playground.ipynb
+
+# the script output
+output/*
