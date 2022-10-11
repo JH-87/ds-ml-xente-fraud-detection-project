@@ -114,7 +114,7 @@ def custom_smote(X, y, RSEED):
     X_sm = X_sm.astype({"Value": "int32", "time_of_day": "int32"})
     return X_sm, y_sm
 
-def custom_preprocess(X_tr, X_te, nf):
+def custom_preprocess(X_tr, X_te, nf, save_scaler=False, custom_scaler=None):
     """function to preprocess data
 
     Args:
@@ -128,12 +128,19 @@ def custom_preprocess(X_tr, X_te, nf):
     """
     from sklearn.preprocessing import StandardScaler
     import pandas as pd
+    import pickle
+    if custom_scaler is None:
+        # Initiate scaler
+        scaler = StandardScaler()
+        # run scaler
 
-    # Initiate scaler
-    scaler = StandardScaler()
-    # run scaler
+        X_tr[nf] = scaler.fit_transform(X_tr[nf])
+    else:
+        scaler = custom_scaler
 
-    X_tr[nf] = scaler.fit_transform(X_tr[nf])
+    if save_scaler:
+        pickle.dump(scaler, open("scaler.p", "wb"))
+
     X_te[nf] = scaler.transform(X_te[nf])
 
     return X_tr, X_te
