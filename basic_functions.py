@@ -37,12 +37,12 @@ def feature_engineering(dataframe):
     #######################
     ### create column with 0 for negative values in "Amount" and 1 for positive values
     dataframe['InOut'] = dataframe['Amount']
-    dataframe['InOut'][dataframe['Amount'] < 0 ] = 1
-    dataframe['InOut'][dataframe['Amount'] >=0 ] = 0
+    dataframe.loc[dataframe['Amount'] < 0 , 'InOut'] = 1
+    dataframe.loc[dataframe['Amount'] >=0, 'InOut'] = 0
 
     ### create a column which is 0 if abs("Amount")=="Value" and 1 if not
     dataframe['difference'] = dataframe.eval("abs(Amount) - Value")
-    dataframe['difference'][dataframe['difference'] != 0] = 1
+    dataframe.loc[dataframe['difference'] != 0, 'difference'] = 1
     dataframe = dataframe.drop("Amount", axis = 1)
 
     ### create weekday column
@@ -140,7 +140,7 @@ def custom_preprocess(X_tr, X_te, nf, save_scaler=False, custom_scaler=None):
         scaler = custom_scaler
 
     if save_scaler:
-        pickle.dump(scaler, open("scaler.p", "wb"))
+        pickle.dump(scaler, open("pickles/scaler.p", "wb"))
 
     X_te[nf] = scaler.transform(X_te[nf])
 
@@ -229,7 +229,7 @@ def custom_rf(X_train, X_test, y_train, y_test, save_model=False):
 
     if save_model:
         import pickle
-        pickle.dump(rf, open( "rf_model.p", "wb" ))
+        pickle.dump(rf, open( "pickles/rf_model.p", "wb" ))
 
     return y_train_pred, y_test_pred
 
