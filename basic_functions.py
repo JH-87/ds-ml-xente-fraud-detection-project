@@ -200,7 +200,7 @@ def custom_nb(X_train, X_test, y_train, y_test):
 
     return y_train_pred, y_test_pred
 
-def custom_rf(X_train, X_test, y_train, y_test):
+def custom_rf(X_train, X_test, y_train, y_test, save_model=False):
     """function to run Random Forest Classifier
 
     Args:
@@ -218,6 +218,10 @@ def custom_rf(X_train, X_test, y_train, y_test):
     rf = RandomForestClassifier()
     y_train_pred = rf.fit(X_train, y_train)
     y_test_pred = rf.predict(X_test)
+
+    if save_model:
+        import pickle
+        pickle.dump(rf, open( "rf_model.p", "wb" ))
 
     return y_train_pred, y_test_pred
 
