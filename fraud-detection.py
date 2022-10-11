@@ -8,15 +8,24 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import f1_score, matthews_corrcoef
 import pandas as pd
 import pickle
+import argparse
 
+# set default command-line arguments
+test_data_path = 'data/xente/full_test_export.csv'
+model_path = 'pickles/rf_model.p'
+csv_output_path = 'output/predictions.csv'
 
-# #### load the model from disk
-# 
-# `loaded_model = joblib.load(filename)  
-# 
-# result = loaded_model.score(X, Y_test)  
+# get command-line arguments (if any)
+arg_parser = argparse.ArgumentParser(description='Take fraud test data and generate predictions in a CSV file, and output the F1 and Matthew\'s Correlation Coefficient for the results.')
+arg_parser.add_argument('--test-data-path', help=f'The path to the labelled test data. Defaults to {test_data_path}')
+arg_parser.add_argument('--model-path', help=f'The path to a pickle file with the pre-trained model. Defaults to {model_path}')
+arg_parser.add_argument('--csv-output-path', help=f'The absolute or relative path to output the CSV file with predictions, including the filename. Defaults to {csv_output_path}')
+args = arg_parser.parse_args()
 
-df = get_data_from_csv(path='data/xente/full_test_export.csv') # input needs to be reworked, at the moment it takes 'data/xente/training.csv' as input
+test_data_path = args.test_data_path if args.test_data_path else test_data_path
+model_path = args.model_path if args.model_path else model_path
+csv_output_path = args.csv_output_path if args.csv_output_path else csv_output_path
+df = get_data_from_csv(path=test_data_path) # input needs to be reworked, at the moment it takes 'data/xente/training.csv' as input
 df = feature_engineering(df)
 
 X = df
@@ -47,8 +56,7 @@ X_sc, cat_features = cust_dummies(X_sc, cat_features)
 ###########################
 
 # import a model from disk, as specified in command-line argument
-model_filename = 'pickles/rf_model.p'
-imported_model = pickle.load(open(model_filename, 'rb'))
+imported_model = pickle.load(open(model_path, 'rb'))
 y_pred = imported_model.predict(X_sc)
 
 # Calculating the accuracy for the classifier
@@ -58,4 +66,4 @@ print("F1-score: {:.2f}".format(f1_score(y, y_pred)))
 print("MCC: {:.2f}".format(matthews_corrcoef(y, y_pred)))
 
 # Export results as CSV
-pd.DataFrame(y_pred).to_csv('output/predictions.csv')
+pd.DataFrame(y_pred).to_csv(csv_output_path)
