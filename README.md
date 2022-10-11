@@ -7,7 +7,7 @@ Fraud detection is an important application of machine learning in the financial
 
 Major Challenges of this binary classification task is the imbalanced dataset illustrated below.
 
-![Dataset](images/Dataset.png)
+![Dataset](images/Dataset2.png)
 
 Although the number of fraudulent transactions is low, the sum of the latter comprises 30 % of transaction volume. 
 
