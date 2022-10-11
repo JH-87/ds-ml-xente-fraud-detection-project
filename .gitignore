@@ -142,4 +142,4 @@ data/
 playground.ipynb
 
 # the script output
-output/*
+output/*.csv
