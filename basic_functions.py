@@ -223,7 +223,7 @@ def custom_rf(X_train, X_test, y_train, y_test, save_model=False):
     from sklearn.ensemble import RandomForestClassifier
 
     # Initiate model
-    rf = RandomForestClassifier()
+    rf = RandomForestClassifier(random_state=42)
     y_train_pred = rf.fit(X_train, y_train)
     y_test_pred = rf.predict(X_test)
 
