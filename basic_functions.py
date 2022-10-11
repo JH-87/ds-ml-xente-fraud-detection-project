@@ -134,7 +134,8 @@ def custom_preprocess(X_tr, X_te, nf, save_scaler=False, custom_scaler=None):
         scaler = StandardScaler()
         # run scaler
 
-        X_tr[nf] = scaler.fit_transform(X_tr[nf])
+        scaler = scaler.fit(X_tr[nf])
+        X_tr[nf] = scaler.transform(X_tr[nf])
     else:
         scaler = custom_scaler
 
